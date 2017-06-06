@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Jun 06 16:14:03 2017
+
+@author: Jiacheng Z
+"""
+#----this correspond to question 2, general setting----
 import numpy as np
 import numpy.random as rand
 from scipy.linalg import toeplitz

@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Jun 06 16:47:39 2017
+
+@author: Jiacheng Z
+"""
+#----this correspond to question 2, part 4----
 import numpy as np
 import matplotlib.pyplot as plt
 
