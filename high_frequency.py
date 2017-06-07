@@ -40,10 +40,10 @@ def main():
         WeeklySpotVol['SPY'][idx] = np.sum(WeeklyChunkSPY)
         WeeklySpotVol['AAPL'][idx] = np.sum(WeeklyChunkAAPL)
 
-    plt.figure()
+    plt.figure(figsize=(8, 6))
     plt.plot(WeeklySpotVol['AAPL'],label='AAPL High-frequency Volatility')
     plt.plot(WeeklySpotVol['SPY'], label='SPY High-frequency Volatility')
-    plt.title('Fig.7 Weeekly Volatility')
+    plt.title('Fig.7 Weeekly Spot High-Frequency Volatility')
     plt.ylabel('Quadratic Covariance')
     plt.xlabel('No. of Week')
     plt.legend()
@@ -52,7 +52,6 @@ def main():
     print('{0}\n[INFO] Finished calculating high-frequency weekly volatilities.'.
         format('=' * 20 + NOW() + '=' * 20))
 
-    #------------part 2, qeustion 4: jump estimation-----------------
     N_DailyObs = N_WeeklyObs/5
     VolLenDaily = len(SPY)//N_DailyObs+1
     DailySpotVol = dict()
@@ -69,10 +68,13 @@ def main():
         DailySpotVol['SPY'][idx] = np.sum(DailyChunkSPY)
         DailySpotVol['AAPL'][idx] = np.sum(DailyChunkAAPL)
 
-    plt.figure()
+    DailySpotVol['SPY'] /= np.sqrt(N_DailyObs)
+    DailySpotVol['AAPL'] /= np.sqrt(N_DailyObs)
+
+    plt.figure(figsize=(8, 6))
     plt.plot(DailySpotVol['AAPL'],label='AAPL High-frequency Volatility')
     plt.plot(DailySpotVol['SPY'], label='SPY High-frequency Volatility')
-    plt.title('Fig.8 Daily Spot Volatility')
+    plt.title('Fig.8 Daily Spot High-Frequency Volatility')
     plt.ylabel('Quadratic Covariance')
     plt.xlabel('No. of Day')
     plt.legend()
@@ -80,6 +82,73 @@ def main():
 
     print('{0}\n[INFO] Finished calculating high-frequency daily volatilities.'.
         format('=' * 20 + NOW() + '=' * 20))
+
+    # ------------part 2, qeustion 4: jump estimation-----------------
+    Delta = 1/float(N_DailyObs)
+
+    Thresholds = dict()
+    Thresholds['AAPL'] = np.array([0.0] * len(SPY))
+    Thresholds['SPY'] = np.array([0.0] * len(SPY))
+
+    AbsDelta = dict()
+    AbsDelta['AAPL'] = np.abs(DeltaAAPL)
+    AbsDelta['SPY'] = np.abs(DeltaSPY)
+
+    for idx in range(VolLenDaily):
+        if idx + N_DailyObs > len(SPY):
+            DailyChunkSPY = AbsDelta['SPY'][idx * N_DailyObs:]
+            ThisBiPowerSPY = np.sum(DailyChunkSPY[1:]*DailyChunkSPY[:-1]) * np.sqrt(2/np.pi)
+            ThisSigmaSPY = ThisBiPowerSPY/np.sqrt(len(SPY)-idx*N_DailyObs)
+            ThisThresholdSPY = 3*ThisSigmaSPY*Delta**0.49
+
+            DailyChunkAAPL= AbsDelta['AAPL'][idx * N_DailyObs:]
+            ThisBiPowerAAPL= np.sum(DailyChunkAAPL[1:] * DailyChunkAAPL[:-1]) * np.sqrt(2 / np.pi)
+            ThisSigmaAAPL= ThisBiPowerAAPL/ np.sqrt(len(SPY)-idx*N_DailyObs)
+            ThisThresholdAAPL= 3 * ThisSigmaAAPL* Delta ** 0.49
+
+            Thresholds['SPY'][idx * N_DailyObs:] = ThisThresholdSPY
+            Thresholds['AAPL'][idx * N_DailyObs:] = ThisThresholdAAPL
+        else:
+            DailyChunkSPY = AbsDelta['SPY'][idx * N_DailyObs:(idx + 1) * N_DailyObs]
+            ThisBiPowerSPY = np.sum(DailyChunkSPY[1:] * DailyChunkSPY[:-1]) * np.sqrt(2 / np.pi)
+            ThisSigmaSPY = np.sqrt(ThisBiPowerSPY / N_DailyObs)
+            ThisThresholdSPY = 3 * ThisSigmaSPY
+
+            DailyChunkAAPL = AbsDelta['AAPL'][idx * N_DailyObs:(idx + 1) * N_DailyObs]
+            ThisBiPowerAAPL = np.sum(DailyChunkAAPL[1:] * DailyChunkAAPL[:-1]) * np.sqrt(2 / np.pi)
+            ThisSigmaAAPL = np.sqrt(ThisBiPowerAAPL / N_DailyObs)
+            ThisThresholdAAPL = 3 * ThisSigmaAAPL
+
+            Thresholds['SPY'][idx * N_DailyObs:(idx + 1) * N_DailyObs] = ThisThresholdSPY
+            Thresholds['AAPL'][idx * N_DailyObs:(idx + 1) * N_DailyObs] = ThisThresholdAAPL
+
+    Jumps = dict()
+    Jumps['SPY'] = np.zeros_like(DeltaSPY)
+    JumpIndexSPY = AbsDelta['SPY'] > np.abs(Thresholds['SPY'][1:])
+    Jumps['SPY'][JumpIndexSPY] = DeltaSPY[JumpIndexSPY]
+
+    Jumps['AAPL'] = np.zeros_like(DeltaAAPL)
+    JumpIndexAAPL = AbsDelta['AAPL'] > np.abs(Thresholds['AAPL'][1:])
+    Jumps['AAPL'][JumpIndexAAPL] = DeltaAAPL[JumpIndexAAPL]
+
+    DeltaReturns = dict()
+    DeltaReturns['SPY'] = DeltaSPY
+    DeltaReturns['AAPL'] = DeltaAAPL
+
+    plt.figure(figsize=(8, 6))
+    f, (ax1, ax2) = plt.subplots(2, sharex=True, sharey=True)
+    for idy, axis in enumerate([ax1, ax2]):
+        Key = Jumps.keys()[idy]
+        thisJumpSerie = Jumps[Key]
+        thisDeltaReturnserie = DeltaReturns[Key]
+        XAxis = range(len(thisDeltaReturnserie))
+        axis.scatter(x=XAxis, y=thisDeltaReturnserie, s=0.1, label='Spot Volitility for {}'.format(Key))
+        axis.scatter(x=XAxis, y=thisJumpSerie, s=1, label='Estimated Jumps for {}'.format(Key))
+        axis.legend()
+
+    ax1.set_title('Fig.9 High-Frequency DeltaReturns and Estimated Jumps')
+    plt.xlabel('No. of Obeservations')
+    plt.savefig('Fig_9.png')
 
 
 if __name__ == '__main__':
