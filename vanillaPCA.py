@@ -46,7 +46,7 @@ def main():
         ax1.set_title('Fig {}.2 Factors Dataset {}'.format(idx+1, idx+1))
         plt.savefig('Fig_{}_2.png'.format(idx+1))
 
-        CollectionKey = 'dataset'+str(idx)
+        CollectionKey = 'dataset'+str(idx+1)
         FactorCollection[CollectionKey] = Factors
         LoadingCollection[CollectionKey] = Loadings
     return  FactorCollection, LoadingCollection
