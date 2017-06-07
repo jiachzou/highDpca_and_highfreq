@@ -83,7 +83,9 @@ def main():
     print('{0}\n[INFO] Finished calculating high-frequency daily volatilities.'.
         format('=' * 20 + NOW() + '=' * 20))
 
-    # ------------part 2, qeustion 4: jump estimation-----------------
+    # -----------------------------------------------------------
+    # ------------part 2, qeustion 4: jump estimation------------
+    # -----------------------------------------------------------
     Delta = 1/float(N_DailyObs)
 
     Thresholds = dict()
@@ -123,11 +125,11 @@ def main():
             Thresholds['AAPL'][idx * N_DailyObs:(idx + 1) * N_DailyObs] = ThisThresholdAAPL
 
     Jumps = dict()
-    Jumps['SPY'] = np.zeros_like(DeltaSPY)
+    Jumps['SPY'] = np.array([np.nan]*len(DeltaSPY))
     JumpIndexSPY = AbsDelta['SPY'] > np.abs(Thresholds['SPY'][1:])
     Jumps['SPY'][JumpIndexSPY] = DeltaSPY[JumpIndexSPY]
 
-    Jumps['AAPL'] = np.zeros_like(DeltaAAPL)
+    Jumps['AAPL'] = np.array([np.nan]*len(DeltaSPY))
     JumpIndexAAPL = AbsDelta['AAPL'] > np.abs(Thresholds['AAPL'][1:])
     Jumps['AAPL'][JumpIndexAAPL] = DeltaAAPL[JumpIndexAAPL]
 
@@ -143,12 +145,47 @@ def main():
         thisDeltaReturnserie = DeltaReturns[Key]
         XAxis = range(len(thisDeltaReturnserie))
         axis.scatter(x=XAxis, y=thisDeltaReturnserie, s=0.1, label='Spot Volitility for {}'.format(Key))
-        axis.scatter(x=XAxis, y=thisJumpSerie, s=1, label='Estimated Jumps for {}'.format(Key))
+        axis.scatter(x=XAxis, y=thisJumpSerie, s=1.5, label='Estimated Jumps for {}'.format(Key))
         axis.legend()
 
     ax1.set_title('Fig.9 High-Frequency DeltaReturns and Estimated Jumps')
     plt.xlabel('No. of Obeservations')
     plt.savefig('Fig_9.png')
+
+    # -----------------------------------------------------------
+    # ---------part 3, qeustion 4: continuous estimation---------
+    # -----------------------------------------------------------
+    Continuous = dict()
+    Continuous['AAPL'] = DeltaAAPL - np.nan_to_num(Jumps['AAPL'])
+    Continuous['SPY'] = DeltaSPY- np.nan_to_num(Jumps['SPY'])
+    WeeklyContinuousVol = dict()
+    WeeklyContinuousVol['SPY'] = np.array([0.0] * VolLenWeekly)
+    WeeklyContinuousVol['AAPL'] = np.array([0.0] * VolLenWeekly)
+
+    for idx in range(VolLenWeekly):
+        if idx + N_WeeklyObs > len(DeltaSPY):
+            WeeklyChunkSPY = np.square(Continuous['SPY'][idx * N_WeeklyObs:])
+            WeeklyChunkAAPL = np.square(Continuous['AAPL'][idx * N_WeeklyObs:])
+        else:
+            WeeklyChunkSPY = np.square(Continuous['SPY'][idx * N_WeeklyObs:(idx + 1) * N_WeeklyObs])
+            WeeklyChunkAAPL= np.square(Continuous['AAPL'][idx * N_WeeklyObs:(idx + 1) * N_WeeklyObs])
+
+        WeeklyContinuousVol['SPY'][idx] = np.sum(WeeklyChunkSPY)
+        WeeklyContinuousVol['AAPL'][idx] = np.sum(WeeklyChunkAAPL)
+
+    plt.figure(figsize=(8, 6))
+    f, (ax1, ax2) = plt.subplots(2, sharex=True, sharey=True)
+    for idy, axis in enumerate([ax1, ax2]):
+        Key = WeeklySpotVol.keys()[idy]
+        thisRawVol = WeeklySpotVol[Key]
+        thisConVol = WeeklyContinuousVol[Key]
+        # XAxis = range(len(thisRawVol))
+        axis.plot(thisRawVol, label='Volatility of {}, Mixture'.format(Key))
+        axis.plot(thisConVol, label='Volatility of {}, Continuous'.format(Key))
+        axis.legend()
+    ax1.set_title('Fig.10 Continuous Weekly Volatilities')
+    plt.xlabel('No. of Obeservations')
+    plt.savefig('Fig_10.png')
 
 
 if __name__ == '__main__':
