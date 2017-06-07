@@ -13,6 +13,9 @@ from vanillaPCA import getFileLocs
 def main():
     FileLocs = getFileLocs()
     Gamma = 50
+    FactorCollection = dict()
+    LoadingCollection = dict()
+
     for idx, fileLoc in enumerate(FileLocs):
         dataset = np.genfromtxt(fileLoc, delimiter=',')
         T,N = dataset.shape
@@ -44,6 +47,11 @@ def main():
         ax1.set_title('Fig {}.2 Factors Dataset {}'.format(idx+4, idx+1))
         plt.savefig('Fig_{}_2.png'.format(idx+4))
 
+        CollectionKey = 'dataset' + str(idx)
+        FactorCollection[CollectionKey] = Factors
+        LoadingCollection[CollectionKey] = Loadings
+    return FactorCollection, LoadingCollection
+
 
 if __name__ == '__main__':
-    main()
+    FactorCollection, LoadingCollection = main()

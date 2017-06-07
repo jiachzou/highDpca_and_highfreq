@@ -16,6 +16,9 @@ def getFileLocs():
 
 def main():
     FileLocs = getFileLocs()
+    FactorCollection = dict()
+    LoadingCollection = dict()
+
     for idx, fileLoc in enumerate(FileLocs):
         dataset = np.genfromtxt(fileLoc, delimiter=',')
 
@@ -43,6 +46,10 @@ def main():
         ax1.set_title('Fig {}.2 Factors Dataset {}'.format(idx+1, idx+1))
         plt.savefig('Fig_{}_2.png'.format(idx+1))
 
+        CollectionKey = 'dataset'+str(idx)
+        FactorCollection[CollectionKey] = Factors
+        LoadingCollection[CollectionKey] = Loadings
+    return  FactorCollection, LoadingCollection
 
 if __name__ == '__main__':
-    main()
+    FactorCollection, LoadingCollection = main()
