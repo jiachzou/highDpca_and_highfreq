@@ -103,8 +103,8 @@ def main():
             ThisSigmaSPY = ThisBiPowerSPY/np.sqrt(len(SPY)-idx*N_DailyObs)
             ThisThresholdSPY = 3*ThisSigmaSPY*Delta**0.49
 
-            DailyChunkAAPL= AbsDelta['AAPL'][idx * N_DailyObs:]
-            ThisBiPowerAAPL= np.sum(DailyChunkAAPL[1:] * DailyChunkAAPL[:-1]) * np.sqrt(2 / np.pi)
+            WeeklyChunkAAPL= AbsDelta['AAPL'][idx * N_DailyObs:]
+            ThisBiPowerAAPL= np.sum(WeeklyChunkAAPL[1:] * WeeklyChunkAAPL[:-1]) * np.sqrt(2 / np.pi)
             ThisSigmaAAPL= ThisBiPowerAAPL/ np.sqrt(len(SPY)-idx*N_DailyObs)
             ThisThresholdAAPL= 3 * ThisSigmaAAPL* Delta ** 0.49
 
@@ -148,7 +148,7 @@ def main():
         axis.scatter(x=XAxis, y=thisJumpSerie, s=1.5, label='Estimated Jumps for {}'.format(Key))
         axis.legend()
 
-    ax1.set_title('Fig.9 High-Frequency DeltaReturns and Estimated Jumps')
+    ax1.set_title('Fig.9 Daily '+r'$\Delta^NX_i$'+' and Estimated Jumps')
     plt.xlabel('No. of Obeservations')
     plt.savefig('Fig_9.png')
 
