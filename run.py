@@ -41,7 +41,7 @@ def maxSharpe(Factors):
     assert Factors.shape == (150,3),'[Error] Factor dimensionality error!\n'
     MuVec = np.mean(Factors, axis=0).reshape((3,1))
     Covariance = np.cov(Factors,rowvar=False)
-    MaxSharpe = MuVec.T.dot(invert(Covariance)).dot(MuVec)
+    MaxSharpe = np.sqrt(MuVec.T.dot(invert(Covariance)).dot(MuVec))
     return MaxSharpe
 
 def main(reSimulate=True):
