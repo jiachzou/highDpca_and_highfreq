@@ -10,6 +10,6 @@
   * [Ahn and Horenstein, 2013](http://onlinelibrary.wiley.com/doi/10.3982/ECTA8968/abstract);
   * [Onatski, 2010](http://www.mitpressjournals.org/doi/abs/10.1162/REST_a_00043);  
   2. High-frequency statistics and jump estimating. Implemented a jump test statistic using local volatility,
-  e.g. 1-day volatility on 5-minute training set for weekly volatility mapping.
+  e.g. 1-day volatility on 5-minute training set for weekly volatility mapping, using the methods summarised by [Christensen et al., 2014](http://www.sciencedirect.com/science/article/pii/S0304405X14001548).
 
 ### For results, please go directly to _visualization_ folder.
