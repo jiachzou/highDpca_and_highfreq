@@ -1,7 +1,7 @@
 # Stub according to a course project for MS&E 349
-_Lorenzo Limonta_,  Department of Aeronautics & Astronautics
+[_Lorenzo Limonta_](https://vpge.stanford.edu/people/lorenzo-limonta),  Department of Aeronautics & Astronautics
 
-_Jiacheng Zou_, Department of Management Sciences & Engineering
+[_Jiacheng Zou_](https://profiles.stanford.edu/jiacheng-zou), Department of Management Sciences & Engineering
 
 ### Two topics are discussed in this project:
   1. High-dimensional PCA for modern linear asset pricing. Discussions on how to statistically determine 
