@@ -8,10 +8,10 @@ Created on Tue Jun 06 16:47:39 2017
 import numpy as np
 import matplotlib.pyplot as plt
 from numpy.linalg import inv as invert
-from vanillaPCA import getFileLocs
+import vanillaPCA
 
 def main():
-    FileLocs = getFileLocs()
+    FileLocs = vanillaPCA.getFileLocs()
     Gamma = 50
     FactorCollection = dict()
     LoadingCollection = dict()
@@ -20,7 +20,7 @@ def main():
         dataset = np.genfromtxt(fileLoc, delimiter=',')
         T,N = dataset.shape
 
-        X_Bar = np.mean(dataset,axis=0)
+        X_Bar = np.mean(dataset,axis=0).reshape((N,1))
         CovarianceMat = (dataset.T).dot(dataset)/T+Gamma*X_Bar.dot(X_Bar.T)
         EigenValues, EigenVectors = np.linalg.eig(CovarianceMat)
 
@@ -29,11 +29,17 @@ def main():
         plt.title('Fig {}.1 Eigenvalues for Dataset {}'.format(idx+4,idx+1))
         plt.savefig('Fig_{}_1.png'.format(idx+4))
 
-        Loadings = (EigenVectors[:3]).T
+        Loadings = EigenVectors[:3]
+        # rescale loadings to make sure that at any given time, all loadings sum up to 1
+        for idy, loading in enumerate(Loadings):
+            rescaleFactor = np.sum(loading)
+            Loadings[idy] = loading/rescaleFactor
+        # get factors by OLS matrix expression: F = X*L*(L^T*L)^(-1)
+        Loadings = Loadings.T
         Factors = dataset.dot(Loadings).dot(invert(Loadings.T.dot(Loadings)))
 
         FactorsForPlot = Factors.T
-        trueFactor = np.genfromtxt(r"C:\Users\Jiacheng Z\Dropbox\Courses\17Spring\MS&E349\MS&E349_Shared\HW2\code\Simulation_Factor_{}.csv".
+        trueFactor = np.genfromtxt(r"C:\Users\Jiacheng Z\Dropbox\Courses\17Spring\MS&E349\MS&E349_Shared\HW2\code\pca\Simulation_Factor_{}.csv".
                                    format(idx+1),delimiter=',').T
 
         plt.figure()

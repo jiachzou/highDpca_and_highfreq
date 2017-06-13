@@ -7,11 +7,12 @@ Created on Tue Jun 06 16:47:39 2017
 #----this correspond to question 2, part 4----
 import numpy as np
 import matplotlib.pyplot as plt
+from numpy.linalg import inv as invert
 
 def getFileLocs():
-    fileLoc1 = r"C:\Users\Jiacheng Z\Dropbox\Courses\17Spring\MS&E349\MS&E349_Shared\HW2\code\Simulation_Dataset_1.csv"
-    fileLoc2 = r"C:\Users\Jiacheng Z\Dropbox\Courses\17Spring\MS&E349\MS&E349_Shared\HW2\code\Simulation_Dataset_2.csv"
-    fileLoc3 = r"C:\Users\Jiacheng Z\Dropbox\Courses\17Spring\MS&E349\MS&E349_Shared\HW2\code\Simulation_Dataset_3.csv"
+    fileLoc1 = r"C:\Users\Jiacheng Z\Dropbox\Courses\17Spring\MS&E349\MS&E349_Shared\HW2\code\pca\Simulation_Dataset_1.csv"
+    fileLoc2 = r"C:\Users\Jiacheng Z\Dropbox\Courses\17Spring\MS&E349\MS&E349_Shared\HW2\code\pca\Simulation_Dataset_2.csv"
+    fileLoc3 = r"C:\Users\Jiacheng Z\Dropbox\Courses\17Spring\MS&E349\MS&E349_Shared\HW2\code\pca\Simulation_Dataset_3.csv"
     return [fileLoc1, fileLoc2, fileLoc3]
 
 def main():
@@ -21,7 +22,7 @@ def main():
 
     for idx, fileLoc in enumerate(FileLocs):
         dataset = np.genfromtxt(fileLoc, delimiter=',')
-
+        T, N = dataset.shape
         CovarianceMat = np.cov(dataset,rowvar=False)
         EigenValues, EigenVectors = np.linalg.eig(CovarianceMat)
 
@@ -29,10 +30,15 @@ def main():
         plt.plot(EigenValues)
         plt.title('Fig {}.1 Eigenvalues for Dataset {}'.format(idx+1,idx+1))
         plt.savefig('Fig_{}_1.png'.format(idx+1))
-        Loadings = (EigenVectors[:3]).T
-        Factors = dataset.dot(Loadings.dot(np.linalg.inv((Loadings.T).dot(Loadings))))
+
+        Loadings = EigenVectors[:3]
+        for idy, loading in enumerate(Loadings):
+            rescaleFactor = np.sum(loading)
+            Loadings[idy] = loading/rescaleFactor
+        Loadings = Loadings.T
+        Factors = dataset.dot(Loadings).dot(invert(Loadings.T.dot(Loadings)))
         FactorsForPlot = Factors.T
-        trueFactor = np.genfromtxt(r"C:\Users\Jiacheng Z\Dropbox\Courses\17Spring\MS&E349\MS&E349_Shared\HW2\code\Simulation_Factor_{}.csv".
+        trueFactor = np.genfromtxt(r"C:\Users\Jiacheng Z\Dropbox\Courses\17Spring\MS&E349\MS&E349_Shared\HW2\code\pca\Simulation_Factor_{}.csv".
                                    format(idx+1),delimiter=',').T
 
         plt.figure()

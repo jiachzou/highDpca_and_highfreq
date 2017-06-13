@@ -8,9 +8,7 @@ Created on Tue Jun 06 17:09:02 2017
 import os
 import re
 
-import factorSimulation
-import vanillaPCA
-import risk_premiumPCA
+import factorSimulation, vanillaPCA, risk_premiumPCA
 import numpy as np
 from numpy.linalg import inv as invert
 from datetime import datetime
@@ -24,7 +22,7 @@ def NOWDIGIT():
 def readTrue():
     trueFactors = dict()
     trueLoadings = dict()
-    factorDir = r"C:\Users\Jiacheng Z\Dropbox\Courses\17Spring\MS&E349\MS&E349_Shared\HW2\code"
+    factorDir = r"C:\Users\Jiacheng Z\Dropbox\Courses\17Spring\MS&E349\MS&E349_Shared\HW2\code\pca"
 
     for idx in range(1,4):
         CollectionKey = 'dataset' + str(idx)
