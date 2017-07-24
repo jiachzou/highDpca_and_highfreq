@@ -1,0 +1,6 @@
+location,marker,chunk,loss,chunk_dict,loss_dict,result
+SHERLOCK,/scratch/PI/giesecke/Jiacheng,/scratch/PI/giesecke/Jiacheng/Data/Fannie_For_RNN/2015,/scratch/PI/giesecke/Jiacheng/Data/Loss/Loss_For_Pool.Rdata,/scratch/PI/giesecke/Jiacheng/Code/fannie/0_misc/state_transit_variables.csv,/scratch/PI/giesecke/Jiacheng/Code/fannie/0_misc/loss_variables.csv,/scratch/PI/giesecke/Jiacheng/Result
+ICME,/home/jasonzou,,/home/jasonzou/data/loss/Loss_For_Pool.Rdata,/home/jasonzou/model/fannie/0_misc/state_transit_variables.csv,/home/jasonzou/model/fannie/0_misc/loss_variables.csv,
+DESKTOP,E:/gse,,E:/gse/Data/Loss_For_Pool.Rdata,D:/OneDrive/Research/gse/code/fannie/0_misc/state_transit_variables.csv,D:/OneDrive/Research/gse/code/fannie/0_misc/loss_variables.csv,
+LAPTOP,C:/OneDrive,C:/Users/Jiacheng Z/datatemp/chunk,C:/Users/Jiacheng Z/datatemp/loss/Loss_For_Pool.RData,C:/OneDrive/Research/gse/code/fannie/0_misc/state_transit_variables.csv,C:/OneDrive/Research/gse/code/fannie/0_misc/loss_variables.csv,C:/Users/Jiacheng Z/resulttemp
+MICHAEL,/home/Zou,/home/Zou/Data/2015,/home/Zou/Data/Loss/Loss_For_Pool.Rdata,/home/Zou/fannie/0_misc/state_transit_variables.csv,/home/Zou/fannie/0_misc/loss_variables.csv,/home/Zou/Result
